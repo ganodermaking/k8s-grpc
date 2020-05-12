@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpc
+  labels:
+    app: grpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 10
+  minReadySeconds: 5
+  selector:
+    matchLabels:
+      app: grpc
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: grpc
+    spec:
+      containers:
+        - image: scratch/grpc:v1
+          imagePullPolicy: IfNotPresent # Always：总是拉取远程镜像；IfNotPresent：本地有镜像, 不拉取远程镜像；Never：只使用本地镜像
+          name: grpc
+          livenessProbe:
+            failureThreshold: 5
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:5000"]
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 15
+          readinessProbe:
+            failureThreshold: 5
+            exec:
+              command: ["/bin/grpc_health_probe", "-addr=:5000"]
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 15
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 50m
+              memory: 50Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpc
+  namespace: default
+  labels:
+    app: grpc
+spec:
+  type: NodePort # LoadBalancer ClusterIP NodePort
+  sessionAffinity: None
+  selector:
+    app: grpc
+  ports:
+    - name: grpc
+      port: 8080 # 暴露给集群内客户访问服务
+      protocol: TCP
+      targetPort: 8080 # targetPort是pod上的端口
+      nodePort: 32766 # 暴露给集群外客户访问服务
