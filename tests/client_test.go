@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	address     = "localhost:50051"
+	address     = "localhost:32766"
 	defaultName = "world"
 )
 

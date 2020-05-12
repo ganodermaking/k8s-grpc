@@ -32,6 +32,6 @@ kubectl create -f deployment.yaml
 
 ## 测试服务
 
-go test -v -count=1 github.com/ganodermaking/k8s-grpc/tests -run TestSayHello
+go test -v -count=1 k8s-grpc/tests -run TestSayHello
 
 > mac docker desktop 2.3.0.2自带kubernetes v1.16.5演示

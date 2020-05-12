@@ -28,7 +28,7 @@ spec:
           livenessProbe:
             failureThreshold: 5
             exec:
-              command: ["/bin/grpc_health_probe", "-addr=:5000"]
+              command: ["/bin/grpc_health_probe", "-addr=:8080"]
             initialDelaySeconds: 60
             periodSeconds: 60
             successThreshold: 1
@@ -36,7 +36,7 @@ spec:
           readinessProbe:
             failureThreshold: 5
             exec:
-              command: ["/bin/grpc_health_probe", "-addr=:5000"]
+              command: ["/bin/grpc_health_probe", "-addr=:8080"]
             initialDelaySeconds: 60
             periodSeconds: 60
             successThreshold: 1
